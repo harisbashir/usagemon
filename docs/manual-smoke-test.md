@@ -2,11 +2,11 @@
 
 Automated checks cover parsers, display state, bridge privacy, real stdio transport, Windows native metrics and basic window placement. These interactive checks require an actual Windows desktop; a cross-build does not establish that they passed.
 
-- [ ] On Windows 10/11 x64 without .NET installed, extract the release zip into a permanent writable folder and start UsageMon.exe. Confirm there is no console window and no taskbar/Alt-Tab entry.
+- [ ] On Windows 10/11 x64 without .NET installed, download only the standalone release EXE into a permanent writable folder and run it without any scripts folder. Confirm there is no console window and no taskbar/Alt-Tab entry.
 - [ ] CPU and RAM readings appear within two seconds and change with system activity. Compare with Task Manager across multiple samples; CPU sampling intervals differ, so values need not match exactly.
 - [ ] Right-click any empty area and use the three-dot button; both open controls. Double-click the tray icon to restore a hidden widget. Exit removes the icon and stops UsageMon's Codex child process tree.
 - [ ] With Codex CLI installed and signed in, values agree with Codex's usage display. Test an account with only a weekly window. Five-hour stays unavailable instead of showing weekly usage under 5h.
-- [ ] With current Claude Code, add the documented bridge to the user's settings and start using Claude Code. Validate five-hour/weekly usage and reset dates. If rate_limits is not yet available, keep the widget in its waiting state.
+- [ ] With current Claude Code, click Set up Claude automatically and verify settings backup and unrelated properties are preserved, then restart Claude Code and start using Claude Code. Validate five-hour/weekly usage and reset dates. If rate_limits is not yet available, keep the widget in its waiting state.
 - [ ] Stop Claude Code. After five minutes, its snapshot is explicitly stale. Resume work and check that a new snapshot clears stale status. Website-only usage does not independently refresh this bridge.
 - [ ] Disconnect the network or sign Codex out. Prior data stays visible but stale, CPU/RAM keep working, and restoring access plus Refresh reconnects.
 - [ ] Drag over a clear taskbar area, switch between other apps, open Start, minimize/maximize apps, and restart Explorer. The widget returns above the taskbar without taking focus. It covers the taskbar controls beneath its own rectangle.
@@ -18,3 +18,6 @@ Automated checks cover parsers, display state, bridge privacy, real stdio transp
 - [ ] Measure UsageMon.exe idle private working set and CPU separately from the installed Codex app-server process. Record actual results rather than assigning an unmeasured footprint claim.
 
 Release status: Windows build and automated native checks are reported by GitHub Actions. Interactive checks remain unverified until checked on a real desktop.
+
+- [ ] Check the 520 × 48 compact layout. Each provider, CPU, and RAM percentage sits over its progress bar; reset countdowns remain visible. Check 0%, 100%, and unavailable values.
+- [ ] With an existing custom Claude status line, automatic setup leaves the settings file unchanged and offers manual integration. With malformed settings, setup leaves the file intact and explains the error.

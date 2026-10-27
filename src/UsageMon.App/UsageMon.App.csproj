@@ -8,7 +8,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AssemblyName>UsageMon</AssemblyName>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
   </PropertyGroup>
   <ItemGroup>
     <Using Include="System" />
@@ -18,5 +18,6 @@
     <Using Include="System.Threading.Tasks" />
     <ProjectReference Include="../UsageMon.Core/UsageMon.Core.csproj" />
     <Content Include="../../scripts/claude-statusline.ps1" Link="scripts/claude-statusline.ps1" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <EmbeddedResource Include="../../scripts/claude-statusline.ps1" LogicalName="UsageMon.ClaudeStatusLine.ps1" />
   </ItemGroup>
 </Project>

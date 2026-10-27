@@ -40,7 +40,7 @@ public sealed class CodexClient : IAsyncDisposable
                     info.RedirectStandardError = true;
                     process = Process.Start(info) ?? throw new IOException("Cannot start Codex.");
                     process.BeginErrorReadLine(); // Drain stderr without retaining credential-bearing diagnostics.
-                    await RequestAsync("initialize", new { clientInfo = new { name = "usagemon", title = "UsageMon", version = "0.1.0" } }, deadline.Token);
+                    await RequestAsync("initialize", new { clientInfo = new { name = "usagemon", title = "UsageMon", version = "0.2.0" } }, deadline.Token);
                     await SendAsync(new { method = "initialized", @params = new { } }, deadline.Token);
                 }
                 var result = await RequestAsync("account/rateLimits/read", null, deadline.Token);

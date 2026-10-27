@@ -18,6 +18,8 @@ public sealed class WidgetViewModel : INotifyPropertyChanged
     public ProviderViewModel Codex { get; } = new("Codex");
     public string Cpu { get; private set; } = "—";
     public string Ram { get; private set; } = "—";
+    public double CpuValue { get; private set; }
+    public double RamValue { get; private set; }
     public event PropertyChangedEventHandler? PropertyChanged;
     public static string DataDirectory => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UsageMon");
 
@@ -42,6 +44,8 @@ public sealed class WidgetViewModel : INotifyPropertyChanged
             var (cpu, ram) = metrics.Sample();
             Cpu = cpu is null ? "—" : $"{cpu:0}%";
             Ram = ram is null ? "—" : $"{ram:0}%";
+            CpuValue = cpu ?? 0;
+            RamValue = ram ?? 0;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
         }
         Render();

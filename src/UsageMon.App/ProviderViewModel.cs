@@ -11,6 +11,8 @@ public sealed class ProviderViewModel(string name) : INotifyPropertyChanged
     public string Status { get; private set; } = "connecting";
     public string FivePercent { get; private set; } = "—";
     public string WeekPercent { get; private set; } = "—";
+    public double FiveValue { get; private set; }
+    public double WeekValue { get; private set; }
     public string FiveReset { get; private set; } = "—";
     public string WeekReset { get; private set; } = "—";
     public Brush StatusBrush { get; private set; } = Brushes.SlateGray;
@@ -27,6 +29,8 @@ public sealed class ProviderViewModel(string name) : INotifyPropertyChanged
         StatusBrush = snapshot is null ? Brushes.SlateGray : stale ? Brushes.Goldenrod : Brushes.MediumAquamarine;
         FivePercent = UsageDisplay.Percent(snapshot?.FiveHour);
         WeekPercent = UsageDisplay.Percent(snapshot?.Weekly);
+        FiveValue = snapshot?.FiveHour?.UsedPercent ?? 0;
+        WeekValue = snapshot?.Weekly?.UsedPercent ?? 0;
         FiveReset = UsageDisplay.Countdown(snapshot?.FiveHour?.ResetsAt, now);
         WeekReset = UsageDisplay.Countdown(snapshot?.Weekly?.ResetsAt, now);
         FiveBrush = UsageBrush(snapshot?.FiveHour);
@@ -40,8 +44,18 @@ public sealed class ProviderViewModel(string name) : INotifyPropertyChanged
     private static string ResetDate(UsageWindow? window) => window?.ResetsAt?.LocalDateTime.ToString("ddd, MMM d yyyy HH:mm:ss") ?? "not reported";
     private static Brush UsageBrush(UsageWindow? window) => window?.UsedPercent switch
     {
-        >= 90 => Brushes.Salmon,
-        >= 70 => Brushes.Goldenrod,
-        _ => Brushes.WhiteSmoke
+        >= 90 => Red,
+        >= 70 => Amber,
+        _ => Green
     };
+
+    private static readonly Brush Green = FrozenBrush(0x35, 0x6A, 0x60);
+    private static readonly Brush Amber = FrozenBrush(0x80, 0x61, 0x22);
+    private static readonly Brush Red = FrozenBrush(0x95, 0x43, 0x43);
+    private static Brush FrozenBrush(byte red, byte green, byte blue)
+    {
+        var brush = new SolidColorBrush(Color.FromRgb(red, green, blue));
+        brush.Freeze();
+        return brush;
+    }
 }

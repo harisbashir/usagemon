@@ -8,10 +8,10 @@ A compact, always-on-top Windows widget for **Claude and Codex subscription limi
 
 *Layout preview with illustrative values. Percentages show allowance **used**.*
 
-- Five-hour and weekly usage, when reported by your subscription.
+- Five-hour and weekly usage shown as progress bars with percentages overlaid, when reported by your subscription.
 - Live reset countdowns and full reset timestamps in tooltips.
 - System-wide CPU and physical RAM usage, sampled every two seconds.
-- Floating overlay with saved position, lock, taskbar snap, and tray controls.
+- Compact 520 × 48 overlay with saved position, lock, taskbar snap, and tray controls.
 - Optional launch at Windows sign-in.
 - Native C# / WPF. No Electron, local web server, API keys, or inference calls.
 
@@ -19,17 +19,16 @@ A compact, always-on-top Windows widget for **Claude and Codex subscription limi
 
 Requires **Windows 10/11 x64** and subscription-authenticated CLI tools for the provider readings. CPU/RAM work independently.
 
-1. Download **UsageMon-win-x64.zip** from [Releases](https://github.com/harisbashir/usagemon/releases/latest).
-2. Extract the entire zip into a permanent folder, such as `%LOCALAPPDATA%\Programs\UsageMon`. Keep the `scripts` folder beside `UsageMon.exe`.
-3. Run `UsageMon.exe`. The portable build includes .NET; no separate runtime or administrator rights are needed.
-4. Right-click the widget → **Connection setup** to connect your installed CLIs.
-5. Drag it onto an unused part of the taskbar, then **Lock position**. Use **Snap over taskbar** as a starting position.
+1. Download **UsageMon-win-x64.exe** from [Releases](https://github.com/harisbashir/usagemon/releases/latest).
+2. Save it in a permanent folder and run it. This is a standalone executable with .NET and the Claude helper built in; no ZIP extraction or scripts folder is required.
+3. Right-click the widget → **Connection setup**. For Claude, click **Set up Claude automatically**, then restart Claude Code.
+4. Drag the widget onto an unused part of the taskbar, then **Lock position**. Use **Snap over taskbar** as a starting position.
 
-Already have the **.NET 10 Windows Desktop Runtime x64**? Choose `UsageMon-win-x64-framework-dependent.zip` for a much smaller download. The standard zip bundles the runtime for machines without .NET; both run the same widget.
+The ZIP download is also available. Already have the **.NET 10 Windows Desktop Runtime x64**? Choose the smaller `UsageMon-win-x64-framework-dependent.exe` or its ZIP. All downloads run the same widget.
 
-The overlay covers whatever is beneath its own rectangle. It does not reserve space inside Explorer's taskbar. Place it clear of Start, pinned apps, and the clock. It is normally 650 × 48 logical pixels and follows Windows display scaling. On narrower monitors it scales down to keep every control visible.
+The overlay covers whatever is beneath its own rectangle. It does not reserve space inside Explorer's taskbar. Place it clear of Start, pinned apps, and the clock. It is normally 520 × 48 logical pixels and follows Windows display scaling. On narrower monitors it scales down to keep every control visible.
 
-The initial release is unsigned, so Windows may show an unknown-publisher prompt. Only run builds from a source you trust.
+The releases are unsigned, so Windows may show an unknown-publisher prompt. Only run builds from a source you trust.
 
 ## Connecting your accounts
 
@@ -50,18 +49,11 @@ UsageMon tracks **Codex allowances through your ChatGPT account**, not ChatGPT c
 
 Install a current [Claude Code](https://code.claude.com/docs/en/overview) and sign in using your Claude subscription. UsageMon receives the documented `rate_limits` data through Claude Code's [status line](https://code.claude.com/docs/en/statusline), which includes percentages and reset timestamps.
 
-Open **Connection setup** in UsageMon and copy its generated configuration. Merge its `statusLine` property into `%USERPROFILE%\.claude\settings.json`, preserving your other settings. Example for an app extracted at `C:\Tools\UsageMon`:
+Open **Connection setup** in UsageMon and click **Set up Claude automatically**. This installs the embedded helper into `%LOCALAPPDATA%\UsageMon\claude-statusline.ps1`, adds the `statusLine` property to your Claude user settings, and preserves other settings. A timestamped backup of the original settings is made alongside the settings file before changing it. Existing UsageMon configurations can be upgraded by clicking the same button again.
 
-```json
-{
-  "statusLine": {
-    "type": "command",
-    "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"C:\\Tools\\UsageMon\\scripts\\claude-statusline.ps1\""
-  }
-}
-```
+Restart Claude Code and work normally. The bridge displays a small usage line in the terminal and saves only normalized usage windows and an observation timestamp to `%LOCALAPPDATA%\UsageMon\claude-usage.json`. The widget reads that file every five seconds. If `CLAUDE_CONFIG_DIR` is set, setup uses that directory's `settings.json`; otherwise it uses `%USERPROFILE%\.claude\settings.json`.
 
-Restart Claude Code and work normally. The bridge displays a small usage line in the terminal and saves only normalized usage windows and an observation timestamp to `%LOCALAPPDATA%\UsageMon\claude-usage.json`. The widget reads that file every five seconds.
+**Existing custom status line?** Automatic setup leaves it unchanged and installs the helper for manual integration. Expand **Manual setup / existing custom status line** for the generated configuration and copy button. Malformed settings files are left untouched.
 
 Claude readings update **when Claude Code emits status data**. Website-only activity does not independently trigger a refresh. Readings older than five minutes are labeled **stale**. Until Claude Code reports limits, the widget shows a setup/waiting state. An API-key-only Claude login may not supply subscription limits.
 
@@ -69,12 +61,12 @@ Claude readings update **when Claude Code emits status data**. Website-only acti
 
 ```powershell
 $payload = [Console]::In.ReadToEnd()
-$payload | & 'C:\Tools\UsageMon\scripts\claude-statusline.ps1' | Out-Null
+$payload | & (Join-Path $env:LOCALAPPDATA 'UsageMon\claude-statusline.ps1') | Out-Null
 # Pass $payload to your existing renderer instead of reading stdin a second time:
 $payload | & powershell.exe -NoProfile -File 'C:\path\to\your-original-renderer.ps1'
 ```
 
-UsageMon never overwrites Claude settings, reads OAuth secrets, or calls undocumented Claude subscription endpoints.
+UsageMon updates Claude settings only when you click the setup button, preserving unrelated properties and backing up the original file. It never reads OAuth secrets or calls undocumented Claude subscription endpoints.
 
 ## Controls and status
 
@@ -89,7 +81,7 @@ UsageMon never overwrites Claude settings, reads OAuth secrets, or calls undocum
 
 `—` means the provider has not reported that window or reset time. **Updating** means the reported reset passed; UsageMon waits for authoritative data rather than guessing a new window or changing usage to zero. Failed refreshes preserve the last good reading and mark it stale. System metrics keep working if either provider is unavailable.
 
-Position and lock settings are stored in `%LOCALAPPDATA%\UsageMon\settings.json`. Optional startup uses the current user's `HKCU\Software\Microsoft\Windows\CurrentVersion\Run\UsageMon` value. Disable startup before moving or removing the app. To uninstall, exit, remove the Claude bridge setting if used, then delete the extracted folder and optional `%LOCALAPPDATA%\UsageMon` data.
+Position and lock settings are stored in `%LOCALAPPDATA%\UsageMon\settings.json`. Optional startup uses the current user's `HKCU\Software\Microsoft\Windows\CurrentVersion\Run\UsageMon` value. Disable startup before moving or removing the app. To uninstall, exit, remove the Claude bridge setting if used, then delete the downloaded EXE or extracted folder and optional `%LOCALAPPDATA%\UsageMon` data.
 
 ## Build and test
 
@@ -105,7 +97,7 @@ powershell -NoProfile -File tests/Test-ClaudeBridge.ps1
 ./scripts/publish.ps1 -FrameworkDependent
 ```
 
-The portable zip is written to `artifacts/UsageMon-win-x64.zip`. `./scripts/publish.ps1 -Runtime win-arm64` can cross-publish an ARM64 build, which is not covered by the x64 Windows checks.
+The portable EXE and ZIP are written to `artifacts/UsageMon-win-x64.exe` and `artifacts/UsageMon-win-x64.zip`. The standalone EXE embeds the Claude bridge, so it works without any sidecar files. `./scripts/publish.ps1 -Runtime win-arm64` can cross-publish an ARM64 build, which is not covered by the x64 Windows checks.
 
 Core tests run on Linux/macOS too; the solution supports Windows cross-compilation, but native tests and the app need Windows:
 
@@ -114,7 +106,7 @@ dotnet test tests/UsageMon.Tests/UsageMon.Tests.csproj
 dotnet build UsageMon.sln -p:EnableWindowsTargeting=true
 ```
 
-GitHub Actions builds on Windows, runs core/native tests, checks the Claude bridge with PowerShell 5.1 and 7, and publishes a self-contained x64 zip. Tagged releases attach that zip automatically to an existing GitHub release. Interactive taskbar, mixed-DPI, resume, and resource-footprint checks are tracked in the [manual smoke checklist](docs/manual-smoke-test.md); compilation alone does not verify them.
+GitHub Actions builds on Windows, runs core/native tests, checks the Claude bridge with PowerShell 5.1 and 7, and publishes standalone self-contained and framework-dependent EXEs plus ZIPs. Tagged releases attach those files automatically to an existing GitHub release. Interactive taskbar, mixed-DPI, resume, and resource-footprint checks are tracked in the [manual smoke checklist](docs/manual-smoke-test.md); compilation alone does not verify them.
 
 ## Implementation
 

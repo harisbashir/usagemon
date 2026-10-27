@@ -45,7 +45,7 @@ public sealed class WindowPlacement(Window window)
     {
         var (_, monitor) = Bounds();
         var dpi = GetDpiForWindow(Handle);
-        var size = WidgetPlacement.FitSize(650, 48, monitor.Monitor.Right - monitor.Monitor.Left, (dpi == 0 ? 96 : dpi) / 96.0);
+        var size = WidgetPlacement.FitSize(520, 48, monitor.Monitor.Right - monitor.Monitor.Left, (dpi == 0 ? 96 : dpi) / 96.0);
         window.Width = size.Width;
         window.Height = size.Height;
         window.UpdateLayout();

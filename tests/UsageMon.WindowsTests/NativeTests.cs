@@ -39,6 +39,7 @@ public class NativeTests
                     Assert.InRange(restored.X, -100000, 100000);
                     Assert.InRange(restored.Y, -100000, 100000);
                     placement.Snap();
+                    Assert.True(window.Width <= 520, "Placement must preserve the compact 520-DIP width.");
                     placement.KeepOnTop();
                     var handle = new System.Windows.Interop.WindowInteropHelper(window).Handle;
                     Assert.NotEqual(0, GetWindowLong(handle, -20) & 0x8); // WS_EX_TOPMOST
