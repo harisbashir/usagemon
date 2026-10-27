@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="146" viewBox="0 0 900 146">
+  <rect width="900" height="146" rx="12" fill="#0c1119"/>
+  <text x="28" y="28" fill="#7d91aa" font-family="Segoe UI,Arial,sans-serif" font-size="10" letter-spacing="2">USAGEMON · ALWAYS WITHIN SIGHT</text>
+  <rect x="26" y="48" width="848" height="66" rx="6" fill="#151b24" stroke="#344256"/>
+  <g font-family="Segoe UI,Arial,sans-serif" font-size="13">
+    <text x="42" y="88" fill="#678197" font-size="22">⠿</text>
+    <text x="76" y="76" fill="#f0f4f8" font-weight="600">Claude</text>
+    <circle cx="80" cy="95" r="3" fill="#66cdaa"/>
+    <text x="169" y="76" fill="#9aa9ba">5h</text><text x="169" y="100" fill="#9aa9ba">7d</text>
+    <text x="207" y="76" fill="#f0f4f8" font-weight="600">32%</text><text x="207" y="100" fill="#f0f4f8" font-weight="600">61%</text>
+    <text x="274" y="76" fill="#9aa9ba">2h 18m</text><text x="274" y="100" fill="#9aa9ba">3d 04h</text>
+    <path d="M356 60v42M648 60v42" stroke="#344256"/>
+    <text x="376" y="76" fill="#f0f4f8" font-weight="600">Codex</text><circle cx="380" cy="95" r="3" fill="#66cdaa"/>
+    <text x="461" y="76" fill="#9aa9ba">5h</text><text x="461" y="100" fill="#9aa9ba">7d</text>
+    <text x="499" y="76" fill="#f0f4f8" font-weight="600">18%</text><text x="499" y="100" fill="#daa520" font-weight="600">74%</text>
+    <text x="566" y="76" fill="#9aa9ba">4h 02m</text><text x="566" y="100" fill="#9aa9ba">2d 11h</text>
+    <text x="670" y="76" fill="#9aa9ba">CPU</text><text x="670" y="100" fill="#9aa9ba">RAM</text>
+    <text x="775" y="76" fill="#f0f4f8" text-anchor="end" font-weight="600">12%</text><text x="775" y="100" fill="#f0f4f8" text-anchor="end" font-weight="600">48%</text>
+    <text x="843" y="88" fill="#9aa9ba" font-size="24">⋮</text>
+  </g>
+</svg>

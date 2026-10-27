@@ -1,0 +1,49 @@
+name: Windows build
+
+on:
+  push:
+    branches: [main, 'feat/**']
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+      - name: Build solution
+        run: dotnet build UsageMon.sln -c Release --nologo
+      - name: Test core and Codex protocol
+        run: dotnet test tests/UsageMon.Tests/UsageMon.Tests.csproj -c Release --no-build --nologo
+      - name: Test Windows metrics and placement
+        run: dotnet test tests/UsageMon.WindowsTests/UsageMon.WindowsTests.csproj -c Release --no-build --nologo
+      - name: Test Claude bridge on Windows PowerShell 5.1
+        shell: powershell
+        run: ./tests/Test-ClaudeBridge.ps1
+      - name: Test Claude bridge on PowerShell 7
+        shell: pwsh
+        run: ./tests/Test-ClaudeBridge.ps1
+      - name: Publish portable Windows x64 app
+        shell: pwsh
+        run: ./scripts/publish.ps1
+      - uses: actions/upload-artifact@v7
+        with:
+          name: UsageMon-win-x64
+          path: artifacts/UsageMon-win-x64.zip
+          if-no-files-found: error
+      - name: Upload release asset
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload $env:GITHUB_REF_NAME artifacts/UsageMon-win-x64.zip --clobber
+    permissions:
+      contents: write
