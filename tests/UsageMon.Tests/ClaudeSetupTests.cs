@@ -110,7 +110,8 @@ public class ClaudeSetupTests : IDisposable
             {
                 var replacement = Path.Combine(root, "replacement.json");
                 File.WriteAllText(replacement, "concurrent atomic replacement");
-                Assert.Throws<IOException>(() => File.Move(replacement, Settings, overwrite: true));
+                var error = Record.Exception(() => File.Move(replacement, Settings, overwrite: true));
+                Assert.True(error is IOException or UnauthorizedAccessException, "Windows must deny replacing settings while the transaction holds its lock.");
             }
             settings["statusLine"] = new System.Text.Json.Nodes.JsonObject { ["type"] = "command", ["command"] = "our bridge" };
             return true;
