@@ -14,7 +14,7 @@
 - [x] Implement `ClaudeSetup.Configure(settingsPath, dataDirectory, bridgeContent)` and an embedded-resource loader. The setup button is the user's explicit action; do not touch any actual Claude settings while developing/testing.
 - [x] Change the default layout and monitor fitting to 520 × 48. Use percentage bars with centered text for Claude, Codex, CPU and RAM; retain reset countdowns. Add native view-model and embedded-helper integration checks.
 - [x] Add a direct self-contained EXE release asset that works without a scripts folder, plus the existing ZIPs and a framework-dependent EXE. Update setup UI, docs and preview.
-- [ ] Run core/bridge tests and cross-build; obtain read-only review; resolve material findings. Push and run Windows CI, then publish v0.2.0 using the successful CI's binaries and verify assets.
+- [x] Run core/bridge tests and cross-build; obtain read-only review; resolve material findings. Push and run Windows CI, then publish v0.2.0 using the successful CI's binaries and verify assets.
 
 ## Review focus
 
@@ -23,3 +23,7 @@
 - A lone released EXE contains the bridge and can install it into a stable path.
 - 520-pixel layout fits all six bars and countdowns at normal and narrow-screen DPI settings.
 - Missing readings remain unavailable rather than appearing as zero.
+
+## Completion evidence
+
+Windows CI 40471145246 passed at 5a075d2: 45 core tests, three native Windows tests, both PowerShell bridge fixtures, and actual standalone EXE startup/520-DIP measurement. Main CI 40471365327 also passed. Release v0.2.0 includes direct self-contained/framework-dependent EXEs and matching ZIPs. Settings updates use an exclusive Windows file handle with exact backups and in-process rollback to protect concurrent edits.

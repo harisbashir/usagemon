@@ -1,4 +1,23 @@
-# v0.1.0 verification
+# UsageMon verification
+
+## v0.2.0
+
+Implementation commit: `5a075d29b72bdc726751a088ed5f7e3609a09a1c`.
+
+[Windows CI run](https://github.com/harisbashir/usagemon/actions/runs/40471145246), October 27, 2026: **passed**.
+
+- Core suite: **45 passed**, including Claude settings backups, unrelated-property retention, legacy upgrades, custom status-line protection, invalid/duplicate JSON rejection, and exclusive settings transactions. Windows also verifies that replacing the settings file is denied while it is locked.
+- Native Windows suite: **3 passed**, covering metrics, compact monitor placement, and installing/running the embedded Claude helper with PowerShell.
+- Claude bridge fixtures passed on Windows PowerShell 5.1 and PowerShell 7.
+- Release solution cross-build: zero warnings and errors. Both self-contained and framework-dependent standalone EXEs and ZIPs published successfully on Windows.
+- The actual self-contained release EXE was copied into a clean folder without scripts, launched, found by its visible tool-window handle, and measured at **520 logical pixels**. This test caught and verified the correction of the progress bars' binding mode.
+- Downloaded CI archives passed integrity checks. Each loose EXE matches its ZIP's executable byte-for-byte, and each ZIP contains the current helper.
+
+Settings changes use an exclusive file handle through read, backup and commit to prevent concurrent writes or replacement on Windows. An exact backup is made before modification, and in-process write failures attempt rollback. The helper itself installs atomically. This is an intentional choice over an unlocked replacement that could lose concurrent Claude settings changes.
+
+Interactive taskbar controls, visual readability across actual fonts/scales, mixed-DPI transitions, and resume behavior still require the [manual smoke checklist](manual-smoke-test.md). Automated startup and width verification do not establish every desktop scenario.
+
+## v0.1.0
 
 Implementation commit: `d6caf21dd65a1428e674cbdec1309b050480bddf`.
 
