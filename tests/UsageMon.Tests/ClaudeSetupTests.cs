@@ -89,12 +89,36 @@ public class ClaudeSetupTests : IDisposable
     [InlineData("{broken")]
     [InlineData("[]")]
     [InlineData("null")]
+    [InlineData("{\"model\":\"a\",\"model\":\"b\"}")]
+    [InlineData("{\"permissions\":{\"deny\":[],\"deny\":[\"Read(secret)\"]}}")]
     public void InvalidSettingsAreLeftUntouched(string original)
     {
         WriteSettings(original);
         Assert.ThrowsAny<JsonException>(() => ClaudeSetup.Configure(Settings, Data, "bridge"));
         Assert.Equal(original, File.ReadAllText(Settings));
         Assert.False(Directory.Exists(Data));
+    }
+
+    [Fact]
+    public void SettingsTransactionExcludesConcurrentWritersAndReadsLatestSettings()
+    {
+        WriteSettings("""{"model":"latest","permissions":{"deny":["Read(secret)"]}}""");
+        var result = ClaudeSettingsFile.Update(Settings, settings =>
+        {
+            Assert.Throws<IOException>(() => File.WriteAllText(Settings, "concurrent overwrite"));
+            if (OperatingSystem.IsWindows())
+            {
+                var replacement = Path.Combine(root, "replacement.json");
+                File.WriteAllText(replacement, "concurrent atomic replacement");
+                Assert.Throws<IOException>(() => File.Move(replacement, Settings, overwrite: true));
+            }
+            settings["statusLine"] = new System.Text.Json.Nodes.JsonObject { ["type"] = "command", ["command"] = "our bridge" };
+            return true;
+        });
+        Assert.True(result.Configured);
+        using var backup = JsonDocument.Parse(File.ReadAllText(result.BackupPath!));
+        Assert.Equal("latest", backup.RootElement.GetProperty("model").GetString());
+        Assert.Equal("Read(secret)", backup.RootElement.GetProperty("permissions").GetProperty("deny")[0].GetString());
     }
 
     private void WriteSettings(string content)

@@ -52,11 +52,11 @@
                 <TextBlock Grid.Column="1" Text="5h" Foreground="{StaticResource Muted}" VerticalAlignment="Center" />
                 <TextBlock Grid.Column="1" Grid.Row="1" Text="7d" Foreground="{StaticResource Muted}" VerticalAlignment="Center" />
                 <Grid Grid.Column="2" VerticalAlignment="Center">
-                    <ProgressBar Style="{StaticResource UsageBar}" Value="{Binding FiveValue}" Foreground="{Binding FiveBrush}" AutomationProperties.Name="Five-hour allowance used" />
+                    <ProgressBar Style="{StaticResource UsageBar}" Value="{Binding FiveValue, Mode=OneWay}" Foreground="{Binding FiveBrush}" AutomationProperties.Name="Five-hour allowance used" />
                     <TextBlock Text="{Binding FivePercent}" Style="{StaticResource BarText}" />
                 </Grid>
                 <Grid Grid.Column="2" Grid.Row="1" VerticalAlignment="Center">
-                    <ProgressBar Style="{StaticResource UsageBar}" Value="{Binding WeekValue}" Foreground="{Binding WeekBrush}" AutomationProperties.Name="Weekly allowance used" />
+                    <ProgressBar Style="{StaticResource UsageBar}" Value="{Binding WeekValue, Mode=OneWay}" Foreground="{Binding WeekBrush}" AutomationProperties.Name="Weekly allowance used" />
                     <TextBlock Text="{Binding WeekPercent}" Style="{StaticResource BarText}" />
                 </Grid>
                 <TextBlock Grid.Column="3" Text="{Binding FiveReset}" Foreground="{StaticResource Muted}" VerticalAlignment="Center" TextAlignment="Right" />
@@ -88,11 +88,11 @@
                 <TextBlock Text="CPU" Foreground="{StaticResource Muted}" VerticalAlignment="Center" />
                 <TextBlock Grid.Row="1" Text="RAM" Foreground="{StaticResource Muted}" VerticalAlignment="Center" />
                 <Grid Grid.Column="1" VerticalAlignment="Center">
-                    <ProgressBar Style="{StaticResource UsageBar}" Value="{Binding CpuValue}" AutomationProperties.Name="CPU utilization" />
+                    <ProgressBar Style="{StaticResource UsageBar}" Value="{Binding CpuValue, Mode=OneWay}" AutomationProperties.Name="CPU utilization" />
                     <TextBlock Text="{Binding Cpu}" Style="{StaticResource BarText}" />
                 </Grid>
                 <Grid Grid.Column="1" Grid.Row="1" VerticalAlignment="Center">
-                    <ProgressBar Style="{StaticResource UsageBar}" Value="{Binding RamValue}" AutomationProperties.Name="Physical RAM in use" />
+                    <ProgressBar Style="{StaticResource UsageBar}" Value="{Binding RamValue, Mode=OneWay}" AutomationProperties.Name="Physical RAM in use" />
                     <TextBlock Text="{Binding Ram}" Style="{StaticResource BarText}" />
                 </Grid>
             </Grid>
