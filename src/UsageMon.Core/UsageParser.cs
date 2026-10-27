@@ -33,8 +33,10 @@ public static class UsageParser
         var root = document.RootElement;
         var observedAt = Epoch(Property(root, "observed_at"))
             ?? throw new JsonException("Claude snapshot has no valid observation time.");
-        return new(Window(Property(root, "five_hour"), "used_percentage", "resets_at"),
-            Window(Property(root, "seven_day"), "used_percentage", "resets_at"), observedAt);
+        var five = Window(Property(root, "five_hour"), "used_percentage", "resets_at");
+        var weekly = Window(Property(root, "seven_day"), "used_percentage", "resets_at");
+        if (five is null && weekly is null) throw new JsonException("Claude snapshot contains no valid usage windows.");
+        return new(five, weekly, observedAt);
     }
 
     private static UsageWindow? Window(JsonElement element, string percentageName, string resetName)

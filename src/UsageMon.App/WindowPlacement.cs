@@ -26,6 +26,7 @@ public sealed class WindowPlacement(Window window)
 
     public void EnsureVisible()
     {
+        FitToMonitor();
         var (rect, monitor) = Bounds();
         var point = WidgetPlacement.Clamp(rect.Left, rect.Top, rect.Right - rect.Left, rect.Bottom - rect.Top, Convert(monitor.Monitor));
         Move(point);
@@ -33,11 +34,22 @@ public sealed class WindowPlacement(Window window)
 
     public void Snap()
     {
+        FitToMonitor();
         var (rect, monitor) = Bounds();
         Move(WidgetPlacement.OnTaskbar(rect.Right - rect.Left, rect.Bottom - rect.Top, Convert(monitor.Monitor), Convert(monitor.Work)));
     }
 
     public void KeepOnTop() => SetWindowPos(Handle, new nint(-1), 0, 0, 0, 0, 0x0013); // NOMOVE | NOSIZE | NOACTIVATE
+
+    private void FitToMonitor()
+    {
+        var (_, monitor) = Bounds();
+        var dpi = GetDpiForWindow(Handle);
+        var size = WidgetPlacement.FitSize(650, 48, monitor.Monitor.Right - monitor.Monitor.Left, (dpi == 0 ? 96 : dpi) / 96.0);
+        window.Width = size.Width;
+        window.Height = size.Height;
+        window.UpdateLayout();
+    }
 
     private (Rect Rect, MonitorInfo Monitor) Bounds()
     {
@@ -67,4 +79,6 @@ public sealed class WindowPlacement(Window window)
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool SetWindowPos(nint window, nint after, int x, int y, int width, int height, uint flags);
+    [DllImport("user32.dll")]
+    private static extern uint GetDpiForWindow(nint window);
 }

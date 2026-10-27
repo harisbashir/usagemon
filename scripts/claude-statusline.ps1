@@ -3,7 +3,9 @@
 $ErrorActionPreference = 'Stop'
 $temporary = $null
 try {
-    $inputData = [Console]::In.ReadToEnd() | ConvertFrom-Json
+    $piped = @($input)
+    $raw = if ($piped.Count -gt 0) { $piped -join [Environment]::NewLine } else { [Console]::In.ReadToEnd() }
+    $inputData = $raw | ConvertFrom-Json
     $limits = $inputData.rate_limits
     if ($null -eq $limits) { return }
 
@@ -36,18 +38,18 @@ try {
     } | ConvertTo-Json -Depth 4 -Compress
     [IO.File]::WriteAllText($temporary, $snapshot, (New-Object Text.UTF8Encoding($false)))
     if ([IO.File]::Exists($destination)) {
-        [IO.File]::Replace($temporary, $destination, $null)
+        [IO.File]::Replace($temporary, $destination, [NullString]::Value)
     } else {
         try { [IO.File]::Move($temporary, $destination) }
-        catch [IO.IOException] { [IO.File]::Replace($temporary, $destination, $null) }
+        catch [IO.IOException] { [IO.File]::Replace($temporary, $destination, [NullString]::Value) }
     }
     $parts = @()
     if ($null -ne $five) { $parts += ('5h {0:0}%' -f $five.used_percentage) }
     if ($null -ne $week) { $parts += ('week {0:0}%' -f $week.used_percentage) }
-    [Console]::WriteLine(($parts -join ' | '))
+    Write-Output ($parts -join ' | ')
 } catch {
     # Avoid interrupting Claude Code or printing input data on malformed/missing reports.
-    [Console]::Error.WriteLine('UsageMon: usage snapshot was not updated.')
+    # Keep the previous reading; the widget exposes its age and marks it stale.
 } finally {
     if ($null -ne $temporary -and [IO.File]::Exists($temporary)) { [IO.File]::Delete($temporary) }
 }

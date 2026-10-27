@@ -45,7 +45,7 @@ Use Claude Code's documented status-line input: `rate_limits.five_hour` and `rat
 
 No chat interface, token spending estimator, billing dashboard, server, browser scraping, or taskbar injection. No fixed CPU/RAM promise before Windows measurement. CLI processes contribute to total footprint, so report that separately when measuring. Keep dependencies minimal.
 
-This workspace is empty, Linux-hosted, lacks dotnet, and contains a read-only placeholder `.git` directory rather than a usable Git repository. Shell network access cannot currently resolve github.com; `gh auth status` reports invalid authentication for harisbashir. These limit local compilation, committing, repository creation, and pushing. Source and automation can be prepared locally after design approval; do not claim Windows runtime verification or GitHub publication without successful evidence. Try available supported network/build capabilities before declaring either permanently blocked.
+At initial design time the empty Linux workspace had no SDK or usable Git repository, and network/authentication access was blocked. The user subsequently enabled access: GitHub authentication works, the new repository was initialized, and a temporary .NET 10 SDK supports core testing and Windows cross-compilation. Windows runtime interaction still requires native CI and a desktop smoke test; do not claim that cross-compilation verifies taskbar interaction.
 
 ## Acceptance
 

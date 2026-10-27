@@ -25,7 +25,9 @@ Requires **Windows 10/11 x64** and subscription-authenticated CLI tools for the 
 4. Right-click the widget → **Connection setup** to connect your installed CLIs.
 5. Drag it onto an unused part of the taskbar, then **Lock position**. Use **Snap over taskbar** as a starting position.
 
-The overlay covers whatever is beneath its own rectangle. It does not reserve space inside Explorer's taskbar. Place it clear of Start, pinned apps, and the clock. It is 650 × 48 logical pixels and follows Windows display scaling; very narrow displays may need a different position.
+Already have the **.NET 10 Windows Desktop Runtime x64**? Choose `UsageMon-win-x64-framework-dependent.zip` for a much smaller download. The standard zip bundles the runtime for machines without .NET; both run the same widget.
+
+The overlay covers whatever is beneath its own rectangle. It does not reserve space inside Explorer's taskbar. Place it clear of Start, pinned apps, and the clock. It is normally 650 × 48 logical pixels and follows Windows display scaling. On narrower monitors it scales down to keep every control visible.
 
 The initial release is unsigned, so Windows may show an unknown-publisher prompt. Only run builds from a source you trust.
 
@@ -69,7 +71,7 @@ Claude readings update **when Claude Code emits status data**. Website-only acti
 $payload = [Console]::In.ReadToEnd()
 $payload | & 'C:\Tools\UsageMon\scripts\claude-statusline.ps1' | Out-Null
 # Pass $payload to your existing renderer instead of reading stdin a second time:
-$payload | & 'C:\path\to\your-original-renderer.ps1'
+$payload | & powershell.exe -NoProfile -File 'C:\path\to\your-original-renderer.ps1'
 ```
 
 UsageMon never overwrites Claude settings, reads OAuth secrets, or calls undocumented Claude subscription endpoints.
@@ -99,6 +101,8 @@ dotnet test tests/UsageMon.Tests/UsageMon.Tests.csproj -c Release
 dotnet test tests/UsageMon.WindowsTests/UsageMon.WindowsTests.csproj -c Release
 powershell -NoProfile -File tests/Test-ClaudeBridge.ps1
 ./scripts/publish.ps1
+# Smaller package for machines with .NET 10 Windows Desktop Runtime:
+./scripts/publish.ps1 -FrameworkDependent
 ```
 
 The portable zip is written to `artifacts/UsageMon-win-x64.zip`. `./scripts/publish.ps1 -Runtime win-arm64` can cross-publish an ARM64 build, which is not covered by the x64 Windows checks.

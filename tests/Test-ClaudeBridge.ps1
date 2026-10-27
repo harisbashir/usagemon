@@ -21,7 +21,18 @@ try {
     if ([IO.File]::ReadAllText($path) -ne $text) { throw 'Missing limits erased good data' }
     '{bad' | & $shell -NoProfile -File $script | Out-Null
     if ([IO.File]::ReadAllText($path) -ne $text) { throw 'Malformed input erased good data' }
-    Write-Host 'Claude bridge: normalization, privacy, zero usage, observation time, and invalid-input retention passed.'
+    '{"rate_limits":{"five_hour":{"used_percentage":16,"resets_at":1800000200}}}' | & $shell -NoProfile -File $script | Out-Null
+    $updated = [IO.File]::ReadAllText($path) | ConvertFrom-Json
+    if ($updated.five_hour.used_percentage -ne 16) { throw 'Second valid report did not atomically replace the first' }
+    # Reproduce a custom PowerShell status line that has already consumed console stdin.
+    $wrapper = Join-Path $temp 'wrapper.ps1'
+    $quoted = $script.Replace("'", "''")
+    [IO.File]::WriteAllText($wrapper, "`$payload = [Console]::In.ReadToEnd()`n`$payload | & '$quoted' | Out-Null")
+    $wrapperOutput = '{"rate_limits":{"five_hour":{"used_percentage":17,"resets_at":1800000200}}}' | & $shell -NoProfile -File $wrapper
+    if ($wrapperOutput) { throw 'Bridge output bypassed Out-Null and interfered with the existing status line' }
+    $fromWrapper = [IO.File]::ReadAllText($path) | ConvertFrom-Json
+    if ($fromWrapper.five_hour.used_percentage -ne 17) { throw 'Custom status-line pipeline input was not received' }
+    Write-Host 'Claude bridge: privacy, normalization, atomic replacement, invalid-input retention, and custom status-line integration passed.'
 } finally {
     $env:LOCALAPPDATA = $original
     if (Test-Path $temp) { Remove-Item $temp -Recurse -Force }

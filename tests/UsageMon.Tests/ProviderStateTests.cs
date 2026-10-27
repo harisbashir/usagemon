@@ -39,4 +39,17 @@ public class ProviderStateTests
         }
         finally { Directory.Delete(directory, true); }
     }
+
+    [Fact]
+    public void MalformedNormalizedSnapshotCannotReplaceValidUsage()
+    {
+        var now = DateTimeOffset.UtcNow;
+        var state = new ProviderState();
+        var good = new UsageSnapshot(new UsageWindow(32, now.AddHours(1)), null, now);
+        state.Update(good);
+        try { state.Update(UsageParser.ParseClaude("""{"observed_at":1800000000,"five_hour":{"used_percentage":"bad"}}""")); }
+        catch (System.Text.Json.JsonException) { state.Fail("Invalid snapshot"); }
+        Assert.Same(good, state.Snapshot);
+        Assert.True(state.IsStale(now));
+    }
 }

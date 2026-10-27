@@ -1,7 +1,7 @@
 <Window x:Class="UsageMon.App.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="UsageMon" Width="650" Height="48" MinWidth="650" MaxWidth="650"
+        Title="UsageMon" Width="650" Height="48"
         WindowStyle="None" ResizeMode="NoResize" Topmost="True" ShowInTaskbar="False"
         ShowActivated="False" Background="{StaticResource Surface}" Foreground="#F0F4F8"
         FontFamily="Segoe UI" FontSize="11" UseLayoutRounding="True"
@@ -34,7 +34,8 @@
             </Grid>
         </DataTemplate>
     </Window.Resources>
-    <Border BorderThickness="1" BorderBrush="#344256">
+    <Viewbox Stretch="Uniform">
+    <Border Width="650" Height="48" BorderThickness="1" BorderBrush="#344256">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="28" />
@@ -63,4 +64,5 @@
                     Click="OpenMenu" ToolTip="Widget controls" AutomationProperties.Name="Widget controls" />
         </Grid>
     </Border>
+    </Viewbox>
 </Window>

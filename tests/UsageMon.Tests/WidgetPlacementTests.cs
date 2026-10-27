@@ -31,4 +31,15 @@ public class WidgetPlacementTests
         Assert.Equal(-1920, result.X);
         Assert.Equal(0, result.Y);
     }
+
+    [Fact]
+    public void HighDpiNarrowMonitorKeepsTheEntireWidgetWithinLogicalWidth()
+    {
+        var size = WidgetPlacement.FitSize(650, 48, 1280, 2);
+        Assert.Equal(640, size.Width);
+        Assert.Equal(47.261538, size.Height, 6);
+        var normal = WidgetPlacement.FitSize(650, 48, 1920, 1.5);
+        Assert.Equal(650, normal.Width);
+        Assert.Equal(48, normal.Height);
+    }
 }
