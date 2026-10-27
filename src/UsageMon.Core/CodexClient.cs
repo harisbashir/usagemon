@@ -70,7 +70,13 @@ public sealed class CodexClient : IAsyncDisposable
                 ?? throw new IOException("Codex exited. Check your CLI installation and run codex login.");
             using var document = JsonDocument.Parse(line);
             var root = document.RootElement;
-            if (!root.TryGetProperty("id", out var responseId) || !responseId.TryGetInt32(out var receivedId) || receivedId != id)
+            if (root.TryGetProperty("method", out _))
+            {
+                if (root.TryGetProperty("id", out var requestId))
+                    await SendAsync(new { id = requestId, error = new { code = -32601, message = "Unsupported method" } }, token);
+                continue;
+            }
+            if (!root.TryGetProperty("id", out var responseId) || responseId.ValueKind != JsonValueKind.Number || !responseId.TryGetInt32(out var receivedId) || receivedId != id)
                 continue;
             if (root.TryGetProperty("error", out _))
                 throw new InvalidOperationException("Codex could not read subscription limits. Run codex login with your ChatGPT account.");

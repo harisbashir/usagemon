@@ -13,6 +13,7 @@ public static class Program
         {
             using var json = System.Text.Json.JsonDocument.Parse(line);
             var root = json.RootElement;
+            if (!root.TryGetProperty("method", out _)) continue;
             var method = root.GetProperty("method").GetString();
             if (method == "initialized") { acknowledged = initialized; continue; }
             var id = root.GetProperty("id").GetInt32();
@@ -23,6 +24,7 @@ public static class Program
                 continue;
             }
             Console.WriteLine("""{"method":"account/rateLimits/updated","params":{}}""");
+            Console.WriteLine("""{"id":"server-notification","method":"unrelated","params":{}}""");
             if (!acknowledged || method != "account/rateLimits/read" || mode == "error")
                 Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(new { id, error = new { code = -32000, message = "sensitive" } }));
             else
